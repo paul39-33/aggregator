@@ -15,6 +15,7 @@ func main(){
 		commandList: map[string]func(*state, command) error {
 			"login":	handlerLogin,
 			"register":	handlerRegister,
+			"reset":	handlerReset,
 		},
 	}
 	args := os.Args

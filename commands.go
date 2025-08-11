@@ -77,6 +77,16 @@ func handlerRegister(s *state, cmd command) error {
 	return nil
 }
 
+func handlerReset(s *state, cmd command) error {
+	err := s.db.ResetUser(context.Background())
+	if err != nil {
+		return fmt.Errorf("Error resetting users database!")
+	}
+
+	fmt.Println("Users database reset successful!")
+	return nil
+}
+
 func (c *commands) run(s *state, cmd command) error {
 	if command, exists := c.commandList[cmd.name]; exists {
 		return command(s, cmd)
