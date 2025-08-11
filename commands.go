@@ -24,8 +24,6 @@ type commands struct {
 	commandList	map[string]func(*state, command) error
 }
 
-var cfg config.Config
-
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.arg) == 0 {
 		return fmt.Errorf("Login command needs a name!")
@@ -37,7 +35,7 @@ func handlerLogin(s *state, cmd command) error {
 		os.Exit(1)
 	}
 
-	err := cfg.SetUser(cmd.arg[0])
+	err := s.cfg.SetUser(cmd.arg[0])
 	if err != nil {
 		return fmt.Errorf("Error setting the username: %v", err)
 	}
@@ -71,7 +69,7 @@ func handlerRegister(s *state, cmd command) error {
 	}
 
 	//Set current user with the given name
-	cfg.SetUser(name)
+	s.cfg.SetUser(name)
 	fmt.Println("User created successfully!")
 	fmt.Println(user)
 	return nil
@@ -84,6 +82,25 @@ func handlerReset(s *state, cmd command) error {
 	}
 
 	fmt.Println("Users database reset successful!")
+	return nil
+}
+
+func handlerUsers(s * state, cmd command) error {
+	//get current user
+	currentUser := s.cfg.CurrentUserName
+
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("Error getting list of users: %v", err)
+	}
+
+	for _, user := range users{
+		if user.Name == currentUser {
+			fmt.Printf("* %v (current)\n", user.Name)
+		} else {
+			fmt.Printf("* %v\n", user.Name)
+		}
+	}
 	return nil
 }
 
