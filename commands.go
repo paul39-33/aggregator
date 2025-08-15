@@ -85,7 +85,7 @@ func handlerReset(s *state, cmd command) error {
 	return nil
 }
 
-func handlerUsers(s * state, cmd command) error {
+func handlerUsers(s *state, cmd command) error {
 	//get current user
 	currentUser := s.cfg.CurrentUserName
 
@@ -101,6 +101,18 @@ func handlerUsers(s * state, cmd command) error {
 			fmt.Printf("* %v\n", user.Name)
 		}
 	}
+	return nil
+}
+
+func handlerAgg(s *state, cmd command) error {
+	url := "https://www.wagslane.dev/index.xml"
+
+	rssfeed, err := fetchFeed(context.Background(), url)
+	if err != nil {
+		return fmt.Errorf("Error running agg: %v", err)
+	}
+
+	fmt.Println(rssfeed)
 	return nil
 }
 
