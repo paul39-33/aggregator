@@ -18,6 +18,7 @@ func main(){
 			"reset":	handlerReset,
 			"users":	handlerUsers,
 			"agg":		handlerAgg,
+			"addfeed":	handlerAddFeed,
 		},
 	}
 	args := os.Args
@@ -41,7 +42,9 @@ func main(){
 
 	//get db URL from environment variable
 	dbURL := os.Getenv("GATOR_DATABASE_URL")
-	cfg.Db_url = dbURL
+	if dbURL != "" {
+		cfg.Db_url = dbURL
+	}
 
 	//load database URL to config struct and sql.Open() a connection to the database
 	db, err := sql.Open("postgres", cfg.Db_url)

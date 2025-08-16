@@ -46,10 +46,11 @@ func handlerLogin(s *state, cmd command) error {
 }
 
 func handlerRegister(s *state, cmd command) error {
-	name := cmd.arg[0]
-	if len(name) == 0 {
+	if len(cmd.arg) == 0 {
 		return fmt.Errorf("Register command needs a name!")
 	}
+
+	name := cmd.arg[0]
 
 	//Check if user with given name exists
 	if _, err := s.db.GetUser(context.Background(), name); err == nil {
@@ -78,7 +79,7 @@ func handlerRegister(s *state, cmd command) error {
 func handlerReset(s *state, cmd command) error {
 	err := s.db.ResetUser(context.Background())
 	if err != nil {
-		return fmt.Errorf("Error resetting users database!")
+		return fmt.Errorf("Error resetting users database: %v", err)
 	}
 
 	fmt.Println("Users database reset successful!")
@@ -113,6 +114,38 @@ func handlerAgg(s *state, cmd command) error {
 	}
 
 	fmt.Println(rssfeed)
+	return nil
+}
+
+func handlerAddFeed(s *state, cmd command) error {
+	if len(cmd.arg) < 2 {
+		return fmt.Errorf("addfeed command requires a name and url!")
+	}
+
+	name := cmd.arg[0]
+	url := cmd.arg[1]
+	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return fmt.Errorf("Error getting current user: %v", err)
+	}
+	CurrentUserID := currentUser.ID
+
+	fmt.Println(currentUser)
+
+	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
+		ID: uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name: name,
+		Url: url,
+		UserID: CurrentUserID,
+	})
+
+	if err != nil {
+		return fmt.Errorf("Error creating feed: %v", err)
+	}
+
+	fmt.Println(feed)
 	return nil
 }
 
