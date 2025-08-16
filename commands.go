@@ -149,6 +149,27 @@ func handlerAddFeed(s *state, cmd command) error {
 	return nil
 }
 
+func handlerFeeds(s *state, cmd command) error {
+	feedsrow, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("Error getting feeds: %v", err)
+	}
+
+	for _, feed := range feedsrow{
+		//get user's name from id
+		userName, err := s.db.GetUserName(context.Background(), feed.UserID)
+		if err != nil {
+			return fmt.Errorf("Error getting user's name: %v", err)
+		}
+
+		fmt.Printf("Name: %v\n", feed.Name)
+		fmt.Printf("Url: %v\n", feed.Url)
+		fmt.Printf("User name: %v\n", userName)
+	}
+
+	return nil
+}
+
 func (c *commands) run(s *state, cmd command) error {
 	if command, exists := c.commandList[cmd.name]; exists {
 		return command(s, cmd)

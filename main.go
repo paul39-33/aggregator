@@ -19,6 +19,7 @@ func main(){
 			"users":	handlerUsers,
 			"agg":		handlerAgg,
 			"addfeed":	handlerAddFeed,
+			"feeds":	handlerFeeds,
 		},
 	}
 	args := os.Args
