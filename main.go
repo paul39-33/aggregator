@@ -13,15 +13,16 @@ func main(){
 	s := state{}
 	c := commands{
 		commandList: map[string]func(*state, command) error {
-			"login":	handlerLogin,
-			"register":	handlerRegister,
-			"reset":	handlerReset,
-			"users":	handlerUsers,
-			"agg":		handlerAgg,
-			"addfeed":	handlerAddFeed,
-			"feeds":	handlerFeeds,
-			"follow":	handlerFollow,
-			"following":handlerFollowing,
+			"login":		handlerLogin,
+			"register":		handlerRegister,
+			"reset":		handlerReset,
+			"users":		handlerUsers,
+			"agg":			handlerAgg,
+			"addfeed":		middlewareLoggedIn(handlerAddFeed),
+			"feeds":		handlerFeeds,
+			"follow":		middlewareLoggedIn(handlerFollow),
+			"following":	middlewareLoggedIn(handlerFollowing),
+			"unfollow":		middlewareLoggedIn(handlerUnfollow),
 		},
 	}
 	args := os.Args
