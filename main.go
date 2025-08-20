@@ -20,6 +20,8 @@ func main(){
 			"agg":		handlerAgg,
 			"addfeed":	handlerAddFeed,
 			"feeds":	handlerFeeds,
+			"follow":	handlerFollow,
+			"following":handlerFollowing,
 		},
 	}
 	args := os.Args
