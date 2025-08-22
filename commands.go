@@ -8,6 +8,9 @@ import (
 	"time"
 	"os"
 	"context"
+	"database/sql"
+	"strconv"
+	"github.com/lib/pq"
 )
 
 type state struct {
@@ -245,6 +248,41 @@ func handlerUnfollow( s *state, cmd command, user database.User) error {
 	return nil
 }
 
+func handlerBrowse(s *state, cmd command, user database.User) error {
+	//check if the user put an optional limit
+	var limit int32
+	if len(cmd.arg) == 0 {
+		limit = 2
+	} else {
+		// Attempt to parse the string argument into an integer
+		parsedLimit, err := strconv.Atoi(cmd.arg[0])
+		if err != nil {
+			// Handle the error if the user enters something that's not a number
+			return fmt.Errorf("Invalid limit argument: %v. Please provide a number.", err)
+		}
+		limit = int32(parsedLimit)
+	}
+
+	posts, err := s.db.GetPostsForUser(context.Background(), database.GetPostsForUserParams{
+		ID:		user.ID,
+		Limit:	limit,
+	})
+	if err != nil {
+		return fmt.Errorf("Error performing browse: %v", err)
+	}
+
+	for _, post := range posts{
+		fmt.Println(post.Title)
+		fmt.Println(post.Url)
+		fmt.Println(post.Description.String)
+		fmt.Println(post.PublishedAt.Time)
+		fmt.Printf("\n")
+	}
+
+	return nil
+
+}
+
 func scrapeFeeds(s *state) error {
 	//get the next feed to fetch
 	nextFeedToFetch, err := s.db.GetNextFeedToFetch(context.Background())
@@ -266,7 +304,49 @@ func scrapeFeeds(s *state) error {
 	
 	//loop over fetched feed Channel.Item
 	for _, item := range fetchedFeed.Channel.Item{
-		fmt.Println(item.Title)
+		//Check if the Description is empty or not and store it to a sql.NullString type
+		var description sql.NullString
+		if item.Description != "" {
+			description = sql.NullString{
+				String: item.Description,
+				Valid: true,
+			} 
+		} else {
+			description = sql.NullString{
+				Valid: false,
+			}
+		}
+
+		//Change PublishedAt format from string to time.Time
+		parsedPubDate, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err != nil {
+			fmt.Printf("Error parsing time format: %v", err)
+			continue
+		}
+		publishedAt := sql.NullTime{
+			Time: parsedPubDate,
+			Valid: true,
+		}
+
+		_, err = s.db.CreatePost(context.Background(), database.CreatePostParams{
+			Title:			item.Title,
+			Url:			item.Link,
+			Description:	description,
+			PublishedAt:	publishedAt,
+			FeedID:			nextFeedToFetch.ID,
+		})
+		if err != nil {
+			// Check if the error is a *pq.Error and if its Code is "23505"
+            if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
+                // This is a unique constraint violation (duplicate URL)
+                // The assignment says to ignore this error
+                // You could optionally log it for debugging, but don't return an error
+                fmt.Printf("Info: Post with URL '%s' already exists, ignoring.\n", item.Link)
+            } else {
+                // This is a different kind of error, so log it
+                fmt.Printf("Error creating new post: %v for URL '%s'\n", err, item.Link)
+            }
+		}
 	}
 
 	return nil
