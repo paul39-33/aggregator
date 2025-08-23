@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/paul39-33/aggregator/internal/config"
-	"github.com/paul39-33/aggregator/internal/database"
+	"github.com/paul39-33/gator/internal/config"
+	"github.com/paul39-33/gator/internal/database"
 	"github.com/google/uuid"
 	"time"
 	"os"

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/paul39-33/aggregator/internal/config"
+	"github.com/paul39-33/gator/internal/config"
 	"log"
 	"os"
 	_ "github.com/lib/pq"
-	"github.com/paul39-33/aggregator/internal/database"
+	"github.com/paul39-33/gator/internal/database"
 	"database/sql"
 )
 
