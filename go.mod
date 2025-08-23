@@ -1,4 +1,4 @@
-module github.com/paul39-33/aggregator
+module github.com/paul39-33/gator
 
 go 1.24.4
 
