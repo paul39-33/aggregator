@@ -10,12 +10,12 @@ VALUES(
 RETURNING *;
 
 -- name: GetPostsForUser :many
-SELECT posts.*, users.id AS user_id, users.name AS user_name, feeds.url AS feed_url, feeds.name AS feed_name
+SELECT posts.*, feed_follows.user_id, feeds.url AS feed_url, feeds.name AS feed_name
 FROM posts
 INNER JOIN feeds
 ON posts.feed_id = feeds.id
-INNER JOIN users
-ON feeds.user_id = users.id
-WHERE users.id = $1
+INNER JOIN feed_follows
+ON feeds.id = feed_follows.feed_id
+WHERE feed_follows.user_id = $1
 ORDER BY posts.created_at DESC
 LIMIT $2;

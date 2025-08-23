@@ -186,7 +186,7 @@ func handlerFeeds(s *state, cmd command) error {
 
 		fmt.Printf("Name: %v\n", feed.Name)
 		fmt.Printf("Url: %v\n", feed.Url)
-		fmt.Printf("User name: %v\n", userName)
+		fmt.Printf("Creator: %v\n", userName)
 	}
 
 	return nil
@@ -213,7 +213,7 @@ func handlerFollow(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("Error performing feed follow: %v", err)
 	}
 
-	fmt.Printf("%v now follows %v", feed_follow.UserName, feed_follow.FeedName)
+	fmt.Printf("%v now follows %v\n", feed_follow.UserName, feed_follow.FeedName)
 	return nil
 	
 }
@@ -264,7 +264,7 @@ func handlerBrowse(s *state, cmd command, user database.User) error {
 	}
 
 	posts, err := s.db.GetPostsForUser(context.Background(), database.GetPostsForUserParams{
-		ID:		user.ID,
+		UserID:		user.ID,
 		Limit:	limit,
 	})
 	if err != nil {
