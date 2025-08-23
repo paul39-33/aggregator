@@ -69,8 +69,11 @@ Create a file called `.gatorconfig.json` in your home directory with the followi
 Replace the db_url with your actual PostgreSQL connection string:
 
 username: Your PostgreSQL username
+
 password: Your PostgreSQL password
+
 localhost:5432: Your PostgreSQL host and port
+
 gator: Your database name
 
 Example: {
@@ -87,17 +90,17 @@ gator register yourusername
 
 ## Command lists
 
- login {username} : login to the specified username if exists
- register {username} : register new user with given username
- reset : reset the program (THIS WILL DELETE ALL USER AND DATA)
- users : list all registered users
- agg {time_duration} : aggregate feeds that the user follows with the given time duration as its frequencies and save it as posts to be viewed.
- addfeed {"feed_name"} {feed_url} : add new feed that will be automatically followed by the current user and can also be followed by other user using "follow {feed_url}"
- feeds : list all feeds and their creators
- follow {feed_url} : follow a feed. If the feed doesn't exist yet then it needs to be added using "addfeed {"feed_name"} {feed_url}"
- following : list all feeds that's followed by the current user
- unfollow {feed_url} : unfollow the given feed
- browse {feed_limit}(optional) : shows all posts (saved feeds) for the current user. If no feed_limit is given then the default value is 2.
+ - login {username} : login to the specified username if exists
+ - register {username} : register new user with given username
+ - reset : reset the program (THIS WILL DELETE ALL USER AND DATA)
+ - users : list all registered users
+ - agg {time_duration} : aggregate feeds that the user follows with the given time duration as its frequencies and save it as posts to be viewed.
+ - addfeed {"feed_name"} {feed_url} : add new feed that will be automatically followed by the current user and can also be followed by other user using "follow {feed_url}"
+ - feeds : list all feeds and their creators
+ - follow {feed_url} : follow a feed. If the feed doesn't exist yet then it needs to be added using "addfeed {"feed_name"} {feed_url}"
+ - following : list all feeds that's followed by the current user
+ - unfollow {feed_url} : unfollow the given feed
+ - browse {feed_limit}(optional) : shows all posts (saved feeds) for the current user. If no feed_limit is given then the default value is 2.
  
 
 
